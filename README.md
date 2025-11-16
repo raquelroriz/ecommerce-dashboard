@@ -27,12 +27,13 @@ create the user interface. Later, I can integrate them with a real API.
 
 - Header with:
     - Store name: “Online Shop Kel.”
-    - Search field (visual only—no functionality yet).
-    - Favorites button with heart icon now functional: Saves IDs in memory and filters the grid; badge shows count.
+    - Search field functional: filters by product name or by type keywords ("hair", "skin", "nails";).
+    - Favorites button with heart icon (badge shows count), now separated in `FavoriteToggleButton` and accessible via
+      `/favorites`.
     - Login dropdown (self-contained): clicking on the user icon opens a menu with the links “Login” and “New account”;
       closes when clicking outside or pressing ESC.
-    - Cart icon (visual only — no function yet).
-- Category bar on the same line: All items, Hair, Skin, Nails (no functional filter yet).
+    - Cart icon with badge and link to `/cart`.
+- Category bar: All items, Hair, Skin, Nails — now functional (filters the grid).
 - Product grid in cards (squares): image area as placeholder, product name, and price in euros (e.g., €12.90).
 - Simple footer.
 
@@ -77,7 +78,13 @@ Available scripts (package.json):
 ## Project structure (summary)
 
 - `src/main.tsx` — entry point; wraps the app with `BrowserRouter` and imports Tailwind styles.
-- `src/App.tsx` — main page with header, categories, and product grid (mock).
+- `src/App.tsx` — root component; holds global state for category and search; sets up routes (`/`, `/favorites`,
+  `/cart`).
+- `src/components/Header.tsx` — header with category filters, search input, favorites toggle button, cart and login.
+- `src/components/Favorite.tsx` — favorites context (`useFavorites`) and `FavoriteToggleButton` used in the header.
+- `src/components/CartContext.tsx` — simple cart context with count and add-to-cart.
+- `src/pages/Home.tsx` — product grid; applies filters (category → search → favorites).
+- `src/pages/ShoppingCart.tsx` — cart page placeholder.
 - `src/pages/Login.tsx` — Login dropdown component (self-contained: has the button and menu within it).
 - `src/index.css` — imports Tailwind CSS.
 - `vite.config.ts` — Vite config.
@@ -96,14 +103,25 @@ I am using Tailwind CSS 4, which is simpler to start with:
 
 ## Next steps (personal roadmap)
 
-- [ ] Implement actual favorites functionality (click on the heart saves to state/localStorage).
-- [ ] Make the search field functional (filter by product name).
+- [x] Implement favorites functionality (heart saves IDs in memory; filter and badge count). [2025-11-16]
+- [x] Make the search field functional (filter by product name and type keywords). [2025-11-16]
+- [x] Make category filters functional (All, Hair, Skin, Nails). [2025-11-16]
 - [ ] Add real images to products (local upload or links).
-- [ ] Add cart with global context (or Zustand/Redux, if it makes sense).
+- [ ] Expand cart features: quantities, remove items, persistence on `/cart` page.
 - [ ] More complete responsiveness and accessibility (focus on keyboard and screen readers).
 
 ## Changelog
 
+- 2025-11-16:
+- Extracted favorites button logic into separate `FavoriteToggleButton` in `src/components/Favorite.tsx`; header no
+  longer contains favorites logic.
+- Header now focuses on category filters (All, Hair, Skin, Nails) and a controlled search input.
+- Search is functional: filters by product name and by type keywords ("hair", "skin", "nails"; or PT "cabelo", "pele", "
+  unha/unhas").
+- Lifted `searchQuery` state to `App` and passed to `Header` and `Home`.
+- In `Home`, products are filtered in order: category → search → favorites; empty states improved.
+- Added route `/favorites` to quickly show only favorites; navigating resets other filters appropriately.
+- Cart badge and `/cart` route wired in header; added basic `CartContext` and `ShoppingCart` page.
 - 2025-11-12:
 - Added component `Footer.tsx` and imported it into `App.tsx`.
 - Added component `Card.tsx` to display products.
@@ -130,4 +148,4 @@ and public examples.
 
 - This is a learning project. Some buttons and links are only visual for now.
 - If you want to make suggestions or open issues, feel free!
-- Last update: 2025-11-12.
+- Last update: 2025-11-16.
