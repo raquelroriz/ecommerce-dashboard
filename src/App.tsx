@@ -6,6 +6,9 @@ import Favorite, {useFavorites} from "./components/Favorite.tsx";
 import Header, {type Category} from "./components/Header.tsx";
 import {CartProvider} from "./components/CartContext.tsx";
 import ShoppingCart from "./pages/ShoppingCart.tsx";
+import ProductDetails from "./pages/ProductDetails.tsx";
+import LoginPage from "./pages/Login.tsx";
+import RegisterPage from "./pages/Register.tsx";
 
 function FavoritesRoute({selectedCategory, searchQuery, onCategoryChange, onSearchChange}: {
   selectedCategory: Category;
@@ -52,6 +55,9 @@ function App() {
                 />
               }/>
               <Route path="/cart" element={<ShoppingCart/>}/>
+              <Route path="/product/:id" element={<ProductDetails/>} />
+              <Route path="/login" element={<LoginPage/>} />
+              <Route path="/register" element={<RegisterPage/>} />
             </Routes>
           </main>
 

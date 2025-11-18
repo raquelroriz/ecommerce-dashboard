@@ -1,4 +1,4 @@
-import Login from "../pages/Login.tsx";
+import UserMenu from "./UserMenu.tsx";
 import {FavoriteToggleButton, useFavorites} from "./Favorite.tsx";
 import {Link, useNavigate} from "react-router-dom";
 import {useCart} from "./CartContext.tsx";
@@ -20,7 +20,7 @@ function CategoryButton({label, value, active, onClick}: {
 }) {
   return (
     <button
-      className={`rounded-full px-3 py-1 hover:bg-gray-200 ${active ? 'bg-gray-700 text-white hover:bg-gray-700' : 'bg-gray-100'}`}
+      className={`rounded-full px-3 py-1 ${active ? 'bg-brand-600 text-white hover:bg-brand-600' : 'bg-white border border-brand-200 hover:bg-brand-50'}`}
       aria-pressed={active}
       onClick={() => onClick(value)}
     >
@@ -34,7 +34,7 @@ export default function Header({selectedCategory, onCategoryChange, searchQuery,
   const {setOnlyFavorites} = useFavorites();
   const navigate = useNavigate();
   return (
-    <header className="border-b bg-pink-200">
+    <header className="border-b border-brand-100 bg-brand-50">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4">
         {/* Store name */}
         <div className="flex items-center gap-2">
@@ -71,7 +71,7 @@ export default function Header({selectedCategory, onCategoryChange, searchQuery,
               placeholder="Search by name or type..."
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
-              className="w-full rounded-full border border-gray-300 bg-gray-100 py-2 pl-10 pr-4 text-sm outline-none focus:border-gray-400 focus:bg-white"
+              className="w-full rounded-full border border-brand-200 bg-white py-2 pl-10 pr-4 text-sm outline-none focus:border-brand-400 focus:ring-2 focus:ring-brand-200"
             />
           </div>
         </div>
@@ -83,7 +83,7 @@ export default function Header({selectedCategory, onCategoryChange, searchQuery,
           {/* Cart icon with badge and link */}
           <Link
             to="/cart"
-            className="relative flex items-center justify-center rounded-full border border-gray-300 bg-white px-3 py-2 text-sm hover:bg-gray-50"
+            className="relative flex items-center justify-center rounded-full border border-brand-200 bg-white px-3 py-2 text-sm hover:bg-brand-50"
             aria-label="Carrinho"
             title="Carrinho"
           >
@@ -94,14 +94,14 @@ export default function Header({selectedCategory, onCategoryChange, searchQuery,
             </svg>
             {count > 0 && (
               <span
-                className="absolute -right-1 -top-1 inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-rose-500 px-1 text-xs font-medium text-white">
+                className="absolute -right-1 -top-1 inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-brand-600 px-1 text-xs font-medium text-white">
                 {count}
               </span>
             )}
           </Link>
 
-          {/* Login dropdown */}
-          <Login/>
+          {/* User menu (login / new account) */}
+          <UserMenu/>
         </nav>
       </div>
 

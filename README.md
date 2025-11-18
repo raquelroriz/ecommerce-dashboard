@@ -1,151 +1,125 @@
-# Kel Online Shop (ReDI course project)
+# Kel Online Shop
 
-This repository is for my project/study for the ReDI School course. The idea is to build a simple online store page to
-practice React + TypeScript with Tailwind CSS and Vite. I am developing it little by little, focusing first on the
-visual (UI) and then on the functionalities.
+Simple online shop (study project) to practice React + TypeScript with Vite and Tailwind CSS.
 
-## Technologies I use
+The focus is on building the UI and gradually adding features such as filters, favorites, cart, and authentication (UI only for now).
 
-- React 19 (with TypeScript) – library for creating the user interface
-- Vite – super-fast build/development tool
-- Tailwind CSS 4 – CSS utilities for fast styling
-- React Router 7 – for navigating between pages (e.g., /login)
-- ESLint – code quality
+## Tech stack
 
-Note: I am not currently using any API. The products on the page are a local array (mock) within the code, just to
-create the user interface. Later, I can integrate them with a real API.
+- React 19 (TypeScript)
+- Vite
+- Tailwind CSS 4
+- React Router 7
+- ESLint
 
-## Why I chose these tools
+Note: there is no real backend/API yet. Products are mocked from a local file.
 
-- Vite: Initializes the project very quickly and the DX is great.
-- Tailwind: Since I'm working on layouts, it was easier to style with utility classes and see the result immediately.
-- TypeScript: Helps me avoid silly mistakes while I'm learning and developing the code.
-- React Router: I created a login dropdown menu in the header that uses `<Link>` for navigation (e.g., to “/login”), so
-  it makes sense to have the router already configured.
-
-## What is already working (UI)
+## Current features
 
 - Header with:
-    - Store name: “Online Shop Kel.”
-    - Search field functional: filters by product name or by type keywords ("hair", "skin", "nails";).
-    - Favorites button with heart icon (badge shows count), now separated in `FavoriteToggleButton` and accessible via
-      `/favorites`.
-    - Login dropdown (self-contained): clicking on the user icon opens a menu with the links “Login” and “New account”;
-      closes when clicking outside or pressing ESC.
-    - Cart icon with badge and link to `/cart`.
-- Category bar: All items, Hair, Skin, Nails — now functional (filters the grid).
-- Product grid in cards (squares): image area as placeholder, product name, and price in euros (e.g., €12.90).
-- Simple footer.
+  - Store name (links to Home).
+  - Controlled search by name/type with category filters: All, Hair, Skin, Nails.
+  - Favorites button with counter and dedicated route: `/favorites`.
+  - Cart with badge and link to `/cart`.
+  - User icon that navigates directly to the Login page (`/login`).
+- Product grid (mock data) with prices in euros and product details page (`/product/:id`) with actions: add to cart and favorite.
+- Basic Cart page (`/cart`).
+- Authentication (UI):
+  - Login page using a reusable `LoginForm` (`/login`).
+  - Account creation page using `RegisterForm` (`/register`).
+  - The Login page includes a link “Create one” to `/register`.
+- Primary “brand” theme in violet (contrasts with the favorites heart in rose).
 
-Everything was assembled with Tailwind CSS (utility classes) and functional React components.
-
-## How to run the project
+## How to run
 
 Prerequisites:
-
-- Node.js 18+ (recommended)
+- Node.js 18+
 
 Steps:
-
 1. Install dependencies:
-
-```bash
-npm install
-```
-
-2. Run in development mode:
-
-```bash
-npm run dev
-```
-
-3. Open the URL that Vite indicates (usually http://localhost:5173).
+   ```bash
+   npm install
+   ```
+2. Start development server:
+   ```bash
+   npm run dev
+   ```
+3. Open the URL printed by Vite (usually http://localhost:5173).
 
 Production build:
-
 ```bash
 npm run build
 npm run preview
 ```
 
-Available scripts (package.json):
+## Scripts (package.json)
 
-- `npm run dev` — starts Vite in dev mode.
-- `npm run build` — compiles TypeScript and creates the production build.
-- `npm run preview` — serves the build for local testing.
-- `npm run lint` — runs ESLint.
+- `npm run dev` — development server (Vite)
+- `npm run build` — production build
+- `npm run preview` — serve the local build
+- `npm run lint` — ESLint
 
 ## Project structure (summary)
 
-- `src/main.tsx` — entry point; wraps the app with `BrowserRouter` and imports Tailwind styles.
-- `src/App.tsx` — root component; holds global state for category and search; sets up routes (`/`, `/favorites`,
-  `/cart`).
-- `src/components/Header.tsx` — header with category filters, search input, favorites toggle button, cart and login.
-- `src/components/Favorite.tsx` — favorites context (`useFavorites`) and `FavoriteToggleButton` used in the header.
-- `src/components/CartContext.tsx` — simple cart context with count and add-to-cart.
-- `src/pages/Home.tsx` — product grid; applies filters (category → search → favorites).
-- `src/pages/ShoppingCart.tsx` — cart page placeholder.
-- `src/pages/Login.tsx` — Login dropdown component (self-contained: has the button and menu within it).
-- `src/index.css` — imports Tailwind CSS.
-- `vite.config.ts` — Vite config.
-- `package.json` — scripts and dependencies.
+- `src/App.tsx` — routes and global filter state (category/search). Routes: `/`, `/favorites`, `/cart`, `/product/:id`, `/login`, `/register`.
+- `src/index.css` — Tailwind v4 and theme tokens (violet brand + auxiliary palettes).
+- `src/components/Header.tsx` — header with search, filters, favorites, cart, and direct link to login.
+- `src/components/Favorite.tsx` — favorites provider/hook + `FavoriteToggleButton`.
+- `src/components/CartContext.tsx` — cart provider/hook.
+- `src/components/Card.tsx` — product card.
+- `src/components/LoginForm.tsx` — reusable login form.
+- `src/components/RegisterForm.tsx` — reusable account creation form.
+- `src/components/UserMenu.tsx` — icon that navigates straight to `/login`.
+- `src/pages/Home.tsx` — product grid with filters and empty states.
+- `src/pages/ProductDetails.tsx` — product details and actions (cart/favorite).
+- `src/pages/ShoppingCart.tsx` — basic cart page.
+- `src/pages/Login.tsx` — page that uses `LoginForm` and links to register.
+- `src/pages/Register.tsx` — page that uses `RegisterForm` and links to login.
 
-Sample products (mock): they are in an array `demoProducts` inside `src/pages/Home.tsx`, without real images for now (I
-use a placeholder “Image”).
+## Color theme
 
-## How Tailwind is configured here
+- `brand-*` tokens configured to violet (violet 50–950) in `src/index.css`.
+- Favorites use `rose-*`, ensuring contrast with the primary brand.
 
-I am using Tailwind CSS 4, which is simpler to start with:
+## Conventions
 
-- In `package.json` I have `tailwindcss` and `@tailwindcss/vite`.
-- In `src/index.css`, I just do `@import “tailwindcss”` and I can already use the classes.
-- I didn't need to create a Tailwind configuration file for this stage of the project.
+- Reusable components live in `src/components`.
+- Route pages live in `src/pages` and mainly compose components.
+- Navigation with `react-router-dom` via `<Link />` and `<Routes />`.
 
-## Next steps (personal roadmap)
+## Roadmap
 
-- [x] Implement favorites functionality (heart saves IDs in memory; filter and badge count). [2025-11-16]
-- [x] Make the search field functional (filter by product name and type keywords). [2025-11-16]
-- [x] Make category filters functional (All, Hair, Skin, Nails). [2025-11-16]
-- [ ] Add real images to products (local upload or links).
-- [ ] Expand cart features: quantities, remove items, persistence on `/cart` page.
-- [ ] More complete responsiveness and accessibility (focus on keyboard and screen readers).
+- [x] Category filters (All/Hair/Skin/Nails) and controlled search. [2025‑11‑16]
+- [x] Favorites with badge and `/favorites` route. [2025‑11‑16]
+- [x] Product details page. [2025‑11‑16]
+- [x] Switch primary palette to violet. [2025‑11‑18]
+- [x] Login and Register pages with reusable forms; header icon goes straight to `/login`. [2025‑11‑18]
+- [ ] Real product images.
+- [ ] Richer cart (quantities, remove, persistence).
+- [ ] Auth API integration (real login/register) and post‑login redirects.
+- [ ] Deeper accessibility and responsiveness.
 
 ## Changelog
 
-- 2025-11-16:
-- Extracted favorites button logic into separate `FavoriteToggleButton` in `src/components/Favorite.tsx`; header no
-  longer contains favorites logic.
-- Header now focuses on category filters (All, Hair, Skin, Nails) and a controlled search input.
-- Search is functional: filters by product name and by type keywords ("hair", "skin", "nails"; or PT "cabelo", "pele", "
-  unha/unhas").
-- Lifted `searchQuery` state to `App` and passed to `Header` and `Home`.
-- In `Home`, products are filtered in order: category → search → favorites; empty states improved.
-- Added route `/favorites` to quickly show only favorites; navigating resets other filters appropriately.
-- Cart badge and `/cart` route wired in header; added basic `CartContext` and `ShoppingCart` page.
-- 2025-11-12:
-- Added component `Footer.tsx` and imported it into `App.tsx`.
-- Added component `Card.tsx` to display products.
-- Created `Favorite.tsx` (provider/hook `useFavorites`) with favorites filter and button in the header with countdown.
-- New page `Home.tsx` for the product grid and integration of the favorites filter.
-- Updated `App.tsx`: header with functional favorites button, category bar, search (still visual) and cart icon. Page
-  structure using `Home` and `Footer`.
-- 2025-10-27:
-    - Initial documentation, setup with Vite + React 19 + TypeScript + Tailwind CSS 4 and React Router 7.
+- 2025‑11‑18
+  - Primary “brand” theme switched to violet (Tailwind violet 50–950) in `src/index.css`.
+  - Added reusable `LoginForm` and `RegisterForm`; routes `/login` and `/register` added.
+  - Simplified `UserMenu`: icon now navigates directly to `/login` (no dropdown).
+- 2025‑11‑16
+  - Functional search and category filters.
+  - Favorites extracted to `Favorite.tsx` with `FavoriteToggleButton` and `/favorites` route.
+  - Cart badge and `/cart` route; general layout with `Home` and `Footer`.
+- 2025‑10‑27
+  - Initial setup with Vite + React 19 + TS + Tailwind CSS 4 + React Router 7.
 
-## Credits and references
+## Credits & references
 
-- Icons: I am using SVGs from Heroicons (open-source icon pack from Tailwind Labs). Website: https://heroicons.com — MIT
-  license.
-- Standard Vite favicon (`/vite.svg`). Vite project: https://vitejs.dev — MIT license.
-- Tailwind CSS: https://tailwindcss.com — MIT License.
-- React Router: https://reactrouter.com
-- React: https://react.dev
+- Icons: Heroicons — https://heroicons.com (MIT)
+- Vite — https://vitejs.dev (MIT)
+- Tailwind CSS — https://tailwindcss.com (MIT)
+- React Router — https://reactrouter.com
+- React — https://react.dev
 
-If I reused any code snippets or visual inspiration, my main reference was the official documentation for these tools
-and public examples.
+Final notes: learning project; some parts are UI‑only. Suggestions are welcome.
 
-## Final notes
-
-- This is a learning project. Some buttons and links are only visual for now.
-- If you want to make suggestions or open issues, feel free!
-- Last update: 2025-11-16.
+Last update: 2025‑11‑18 20:07

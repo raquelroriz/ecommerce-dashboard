@@ -1,4 +1,7 @@
+import { useNavigate } from "react-router-dom";
+
 type CardProps = {
+    id: number;
     name: string;
     priceEUR: number;
     image?: string;
@@ -8,11 +11,18 @@ type CardProps = {
     onAddToCart?: () => void; // novo: adicionar ao carrinho
 };
 
-function Card({name, priceEUR, image, onMoreDetails, onToggleFavorite, isFavorite, onAddToCart}: CardProps) {
+function Card({id, name, priceEUR, image, onMoreDetails, onToggleFavorite, isFavorite, onAddToCart}: CardProps) {
+    const navigate = useNavigate();
+
+    const goToDetails = () => {
+        if (onMoreDetails) onMoreDetails();
+        navigate(`/product/${id}`);
+    };
+
     return (
         <article className="overflow-hidden rounded-lg border bg-white shadow-sm">
             {/* Quadrado do produto (imagem) */}
-            <div className="aspect-square w-full bg-gray-100" aria-hidden>
+            <div className="aspect-square w-full bg-neutral-100" aria-hidden>
                 {/* Placeholder de imagem enquanto não temos real */}
                 {image ? (
                     <img src={image} alt={name} className="h-full w-full object-cover"/>
@@ -30,8 +40,9 @@ function Card({name, priceEUR, image, onMoreDetails, onToggleFavorite, isFavorit
             {/* Ações */}
             <div className="mt-3 flex w-full items-center gap-2 px-3 pb-3">
                 <button
-                    className="rounded-full bg-blue-500 text-white px-3 py-1 text-sm hover:bg-blue-600"
-                    onClick={onMoreDetails}
+                    className="rounded-full bg-brand-600 text-white px-3 py-1 text-sm hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-200"
+                    onClick={goToDetails}
+                    type="button"
                 >
                     More details
                 </button>
@@ -39,7 +50,7 @@ function Card({name, priceEUR, image, onMoreDetails, onToggleFavorite, isFavorit
                 {/* Carrinho ícone*/}
                 <button
                     type="button"
-                    className="flex items-center justify-center rounded-full border border-gray-300 bg-white px-3 py-2 text-sm hover:bg-gray-50"
+                    className="flex items-center justify-center rounded-full border border-brand-200 bg-white px-3 py-2 text-sm hover:bg-brand-50"
                     onClick={onAddToCart}
                     aria-label="Adicionar ao carrinho"
                     title="Adicionar ao carrinho"
@@ -57,8 +68,8 @@ function Card({name, priceEUR, image, onMoreDetails, onToggleFavorite, isFavorit
                     aria-label="Favorites"
                     aria-pressed={!!isFavorite}
                     title={isFavorite ? "Remove from favorites" : "Add to favorites"}
-                    className={`ml-auto flex items-center justify-center rounded-full border px-3 py-2 text-sm hover:bg-gray-50 ${
-                        isFavorite ? "border-rose-400 bg-rose-50" : "border-gray-300 bg-white"
+                    className={`ml-auto flex items-center justify-center rounded-full border px-3 py-2 text-sm hover:bg-brand-50 ${
+                        isFavorite ? "border-rose-400 bg-rose-50" : "border-brand-200 bg-white"
                     }`}
                     onClick={onToggleFavorite}
                 >

@@ -4,29 +4,8 @@ import {useFavorites} from "../components/Favorite.tsx";
 import type {Category} from "../components/Header.tsx";
 import { useCart } from "../components/CartContext.tsx";
 import { useLocation } from "react-router-dom";
-
- type Product = {
-  id: number;
-  name: string;
-  priceEUR: number;
-  category: Exclude<Category, 'all'>;
-  image?: string; // opcional por enquanto, usamos um placeholder
-};
-
-const demoProducts: Product[] = [
-  {id: 1, name: "Shampoo Nutritivo", priceEUR: 12.9, category: 'hair'},
-  {id: 2, name: "Hidratante Facial", priceEUR: 18.5, category: 'skin'},
-  {id: 3, name: "Base Cobertura Leve", priceEUR: 22.0, category: 'skin'},
-  {id: 4, name: "Óleo para Unhas", priceEUR: 9.75, category: 'nails'},
-  {id: 5, name: "Máscara Capilar", priceEUR: 16.4, category: 'hair'},
-  {id: 6, name: "Sérum Antioxidante", priceEUR: 29.9, category: 'skin'},
-  {id: 7, name: "Esmalte", priceEUR: 1.75, category: 'nails'},
-  {id: 8, name: "Óleo Capilar", priceEUR: 4.4, category: 'hair'},
-  {id: 9, name: "Protetor Solar", priceEUR: 15.9, category: 'skin'},
-  {id: 10, name: "Alicate", priceEUR: 16.54, category: 'nails'},
-  {id: 11, name: "Óleo de coco", priceEUR: 6.20, category: 'hair'},
-  {id: 12, name: "Sabonete facil", priceEUR: 8.19, category: 'skin'},
-];
+import type { Product } from "../data/products";
+import { demoProducts } from "../data/products";
 
 type HomeProps = {
   selectedCategory: Category;
@@ -90,6 +69,7 @@ function Home({selectedCategory, searchQuery}: HomeProps) {
         {productsToRender.map((p) => (
           <Card
             key={p.id}
+            id={p.id}
             name={p.name}
             priceEUR={p.priceEUR}
             image={p.image}
