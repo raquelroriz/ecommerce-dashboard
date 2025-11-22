@@ -14,18 +14,18 @@ export default function RegisterForm({ onSubmit }: { onSubmit?: (values: Registe
     e.preventDefault();
     setError(null);
     if (!name || !email || !password) {
-      setError("Preencha todos os campos.");
+      setError("Please fill in all fields.");
       return;
     }
     if (password !== confirm) {
-      setError("As palavras‑passe não coincidem.");
+      setError("Passwords do not match.");
       return;
     }
     try {
       setLoading(true);
       await onSubmit?.({ name, email, password });
     } catch (err) {
-      setError("Não foi possível criar a conta. Tente novamente.");
+      setError("Could not create the account. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -34,7 +34,7 @@ export default function RegisterForm({ onSubmit }: { onSubmit?: (values: Registe
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="block text-sm font-medium" htmlFor="name">Nome</label>
+        <label className="block text-sm font-medium" htmlFor="name">Name</label>
         <input
           id="name"
           type="text"
@@ -42,7 +42,7 @@ export default function RegisterForm({ onSubmit }: { onSubmit?: (values: Registe
           onChange={(e) => setName(e.target.value)}
           required
           className="mt-1 w-full rounded-md border border-brand-200 bg-white px-3 py-2 text-sm outline-none focus:border-brand-400 focus:ring-2 focus:ring-brand-200"
-          placeholder="Seu nome"
+          placeholder="Your name"
         />
       </div>
 
@@ -55,12 +55,12 @@ export default function RegisterForm({ onSubmit }: { onSubmit?: (values: Registe
           onChange={(e) => setEmail(e.target.value)}
           required
           className="mt-1 w-full rounded-md border border-brand-200 bg-white px-3 py-2 text-sm outline-none focus:border-brand-400 focus:ring-2 focus:ring-brand-200"
-          placeholder="seu@email.com"
+          placeholder="you@example.com"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium" htmlFor="password">Palavra‑passe</label>
+        <label className="block text-sm font-medium" htmlFor="password">Password</label>
         <input
           id="password"
           type="password"
@@ -73,7 +73,7 @@ export default function RegisterForm({ onSubmit }: { onSubmit?: (values: Registe
       </div>
 
       <div>
-        <label className="block text-sm font-medium" htmlFor="confirm">Confirmar palavra‑passe</label>
+        <label className="block text-sm font-medium" htmlFor="confirm">Confirm password</label>
         <input
           id="confirm"
           type="password"
@@ -94,7 +94,7 @@ export default function RegisterForm({ onSubmit }: { onSubmit?: (values: Registe
         disabled={loading}
         className="w-full rounded-md bg-brand-600 px-4 py-2 text-white hover:bg-brand-700 disabled:opacity-60"
       >
-        {loading ? "Criando conta…" : "Criar conta"}
+        {loading ? "Creating account…" : "Create account"}
       </button>
     </form>
   );

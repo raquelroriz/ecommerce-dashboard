@@ -1,12 +1,21 @@
 import {useEffect, useMemo, useState} from "react";
-import {useCart} from "../components/CartContext.tsx";
-import {Link} from "react-router-dom";
+import {useCart} from "../context/CartContext.tsx";
+import {useFavorites} from "../context/FavoriteContext.tsx";
+import {Link, useNavigate} from "react-router-dom";
 
 export default function ShoppingCart() {
   const {items, increment, decrement, removeAll, clear, subtotal} = useCart();
+  const { setOnlyFavorites } = useFavorites();
+  const FALLBACK_IMG = "https://placehold.co/200x200?text=No+Image";
+  const navigate = useNavigate();
 
   // Seleção de itens no carrinho (apenas estado local desta página)
   const [selected, setSelected] = useState<Set<number>>(new Set());
+
+  // Ao entrar na página do carrinho, garanta que o filtro de favoritos não fique ativo
+  useEffect(() => {
+    setOnlyFavorites(false);
+  }, [setOnlyFavorites]);
 
   // Mantém a seleção consistente quando os itens do carrinho mudam
   useEffect(() => {
@@ -42,17 +51,17 @@ export default function ShoppingCart() {
 
   const selectedCount = selected.size;
   const selectedSubtotal = useMemo(() => {
-    return items.filter(i => selected.has(i.id)).reduce((acc, it) => acc + it.priceEUR * it.qty, 0);
+    return items
+      .filter(i => selected.has(i.id))
+      .reduce((acc, it) => acc + (Number(it.priceUSD) || 0) * (Number.isFinite(it.qty) ? it.qty : 0), 0);
   }, [items, selected]);
   
   // Subtotal mostrado no rodapé deve refletir a seleção quando houver itens selecionados
   const displayedSubtotal = selectedCount > 0 ? selectedSubtotal : subtotal;
 
   const handlePurchase = () => {
-    // Placeholder sem lógica real por enquanto
-    // Futuro: enviar itens selecionados para checkout
-    console.log("Make a purchase - selected items:", Array.from(selected.values()));
-    alert(`Make a purchase of ${selectedCount} item(s).`);
+    // Redireciona para o checkout protegido (RequireAuth cuidará do login)
+    navigate("/checkout");
   };
 
   return (
@@ -86,7 +95,7 @@ export default function ShoppingCart() {
             <div className="flex items-center gap-3">
               {/* Subtotal dos selecionados como feedback visual */}
               <div className="text-sm text-neutral-700">
-                Selected subtotal: € {selectedSubtotal.toFixed(2)}
+                Selected subtotal: $ {selectedSubtotal.toFixed(2)}
               </div>
               <button
                 type="button"
@@ -109,24 +118,34 @@ export default function ShoppingCart() {
                   className="h-4 w-4"
                   checked={selected.has(item.id)}
                   onChange={() => toggleOne(item.id)}
-                  aria-label={`Selecionar ${item.name}`}
+                  aria-label={`Select ${item.name}`}
                 />
 
                 <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded bg-neutral-100">
                   {item.image ? (
-                    <img src={item.image} alt={item.name} className="h-full w-full object-cover"/>
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      loading="lazy"
+                      referrerPolicy="no-referrer"
+                      onError={(e) => {
+                        const t = e.currentTarget;
+                        if (t.src !== FALLBACK_IMG) t.src = FALLBACK_IMG;
+                      }}
+                      className="h-full w-full object-cover"
+                    />
                   ) : null}
                 </div>
                 <div className="flex flex-1 items-center justify-between gap-4">
                   <div>
                     <div className="font-medium">{item.name}</div>
-                    <div className="text-sm text-neutral-600">€ {item.priceEUR.toFixed(2)}</div>
+                    <div className="text-sm text-neutral-600">$ {Number(item.priceUSD ?? 0).toFixed(2)}</div>
                   </div>
                   <div className="flex items-center gap-2">
                     <button
                       className="rounded border border-brand-200 px-2 py-1 hover:bg-brand-50"
                       onClick={() => decrement(item.id)}
-                      aria-label="Diminuir"
+                      aria-label="Decrease"
                     >
                       -
                     </button>
@@ -134,7 +153,7 @@ export default function ShoppingCart() {
                     <button
                       className="rounded border border-brand-200 px-2 py-1 hover:bg-brand-50"
                       onClick={() => increment(item.id)}
-                      aria-label="Aumentar"
+                      aria-label="Increase"
                     >
                       +
                     </button>
@@ -152,7 +171,7 @@ export default function ShoppingCart() {
 
           <div className="mt-4 flex items-center justify-between">
             <button className="text-sm text-danger-600 hover:text-danger-700" onClick={clear}>Empty shopping cart</button>
-            <div className="text-lg font-semibold">Subtotal: € {displayedSubtotal.toFixed(2)}</div>
+            <div className="text-lg font-semibold">Subtotal: $ {displayedSubtotal.toFixed(2)}</div>
           </div>
         </>
       )}

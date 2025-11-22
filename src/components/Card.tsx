@@ -1,9 +1,10 @@
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 type CardProps = {
     id: number;
     name: string;
-    priceEUR: number;
+    priceUSD: number;
     image?: string;
     onMoreDetails?: () => void;
     onToggleFavorite?: () => void;
@@ -11,13 +12,17 @@ type CardProps = {
     onAddToCart?: () => void; // novo: adicionar ao carrinho
 };
 
-function Card({id, name, priceEUR, image, onMoreDetails, onToggleFavorite, isFavorite, onAddToCart}: CardProps) {
+function Card({id, name, priceUSD, image, onMoreDetails, onToggleFavorite, isFavorite, onAddToCart}: CardProps) {
     const navigate = useNavigate();
+    // Se não houver imagem ou se a imagem falhar ao carregar, o card não deve ser exibido
+    const [hidden, setHidden] = useState<boolean>(!image);
 
     const goToDetails = () => {
         if (onMoreDetails) onMoreDetails();
         navigate(`/product/${id}`);
     };
+
+    if (hidden) return null;
 
     return (
         <article className="overflow-hidden rounded-lg border bg-white shadow-sm">
@@ -25,7 +30,14 @@ function Card({id, name, priceEUR, image, onMoreDetails, onToggleFavorite, isFav
             <div className="aspect-square w-full bg-neutral-100" aria-hidden>
                 {/* Placeholder de imagem enquanto não temos real */}
                 {image ? (
-                    <img src={image} alt={name} className="h-full w-full object-cover"/>
+                    <img
+                        src={image}
+                        alt={name}
+                        loading="lazy"
+                        referrerPolicy="no-referrer"
+                        onError={() => setHidden(true)}
+                        className="h-full w-full object-cover"
+                    />
                 ) : (
                     <div className="flex h-full w-full items-center justify-center text-gray-400">Image</div>
                 )}
@@ -34,7 +46,7 @@ function Card({id, name, priceEUR, image, onMoreDetails, onToggleFavorite, isFav
             {/* Descrição */}
             <div className="space-y-1 p-3">
                 <h3 className="line-clamp-2 text-sm font-medium">{name}</h3>
-                <p className="text-base font-semibold">€ {priceEUR.toFixed(2)}</p>
+                <p className="text-base font-semibold">$ {priceUSD.toFixed(2)}</p>
             </div>
 
             {/* Ações */}
@@ -52,8 +64,8 @@ function Card({id, name, priceEUR, image, onMoreDetails, onToggleFavorite, isFav
                     type="button"
                     className="flex items-center justify-center rounded-full border border-brand-200 bg-white px-3 py-2 text-sm hover:bg-brand-50"
                     onClick={onAddToCart}
-                    aria-label="Adicionar ao carrinho"
-                    title="Adicionar ao carrinho"
+                    aria-label="Add to cart"
+                    title="Add to cart"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                          className="h-5 w-5">

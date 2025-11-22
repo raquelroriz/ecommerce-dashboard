@@ -2,13 +2,16 @@ import {useEffect, useState} from "react";
 import {Route, Routes} from "react-router-dom";
 import Footer from "./components/Footer.tsx";
 import Home from "./pages/Home.tsx";
-import Favorite, {useFavorites} from "./components/Favorite.tsx";
+import Favorite, {useFavorites} from "./context/FavoriteContext.tsx";
 import Header, {type Category} from "./components/Header.tsx";
-import {CartProvider} from "./components/CartContext.tsx";
+import {CartProvider} from "./context/CartContext.tsx";
 import ShoppingCart from "./pages/ShoppingCart.tsx";
 import ProductDetails from "./pages/ProductDetails.tsx";
 import LoginPage from "./pages/Login.tsx";
 import RegisterPage from "./pages/Register.tsx";
+import { AuthProvider, RequireAuth } from "./context/AuthContext.tsx";
+import CheckoutPage from "./pages/Checkout.tsx";
+import OrderSuccessPage from "./pages/OrderSuccess.tsx";
 
 function FavoritesRoute({selectedCategory, searchQuery, onCategoryChange, onSearchChange}: {
   selectedCategory: Category;
@@ -31,42 +34,46 @@ function App() {
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   return (
-    <CartProvider>
-      <Favorite>
-        <div className="min-h-screen bg-gray-50 text-gray-900 flex flex-col">
+    <AuthProvider>
+      <CartProvider>
+        <Favorite>
+          <div className="min-h-screen bg-gray-50 text-gray-900 flex flex-col">
 
-          {/* Header */}
-          <Header
-            selectedCategory={selectedCategory}
-            onCategoryChange={setSelectedCategory}
-            searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
-          />
+            {/* Header */}
+            <Header
+              selectedCategory={selectedCategory}
+              onCategoryChange={setSelectedCategory}
+              searchQuery={searchQuery}
+              onSearchChange={setSearchQuery}
+            />
 
-          <main className="flex-1">
-            <Routes>
-              <Route path="/" element={<Home selectedCategory={selectedCategory} searchQuery={searchQuery}/>}/>
-              <Route path="/favorites" element={
-                <FavoritesRoute
-                  selectedCategory={selectedCategory}
-                  searchQuery={searchQuery}
-                  onCategoryChange={setSelectedCategory}
-                  onSearchChange={setSearchQuery}
-                />
-              }/>
-              <Route path="/cart" element={<ShoppingCart/>}/>
-              <Route path="/product/:id" element={<ProductDetails/>} />
-              <Route path="/login" element={<LoginPage/>} />
-              <Route path="/register" element={<RegisterPage/>} />
-            </Routes>
-          </main>
+            <main className="flex-1">
+              <Routes>
+                <Route path="/" element={<Home selectedCategory={selectedCategory} searchQuery={searchQuery}/>}/>
+                <Route path="/favorites" element={
+                  <FavoritesRoute
+                    selectedCategory={selectedCategory}
+                    searchQuery={searchQuery}
+                    onCategoryChange={setSelectedCategory}
+                    onSearchChange={setSearchQuery}
+                  />
+                }/>
+                <Route path="/cart" element={<ShoppingCart/>}/>
+                <Route path="/checkout" element={<RequireAuth><CheckoutPage/></RequireAuth>} />
+                <Route path="/order-success" element={<OrderSuccessPage/>} />
+                <Route path="/product/:id" element={<ProductDetails/>} />
+                <Route path="/login" element={<LoginPage/>} />
+                <Route path="/register" element={<RegisterPage/>} />
+              </Routes>
+            </main>
 
-          {/* Importando o rodapé simples */}
-          <Footer/>
+            {/* Importando o rodapé simples */}
+            <Footer/>
 
-        </div>
-      </Favorite>
-    </CartProvider>
+          </div>
+        </Favorite>
+      </CartProvider>
+    </AuthProvider>
   );
 }
 

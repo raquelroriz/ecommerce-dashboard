@@ -1,11 +1,11 @@
-import {useEffect, useMemo} from "react";
+import {useEffect, useMemo, useState} from "react";
 import Card from "../components/Card.tsx";
-import {useFavorites} from "../components/Favorite.tsx";
+import {useFavorites} from "../context/FavoriteContext.tsx";
 import type {Category} from "../components/Header.tsx";
-import { useCart } from "../components/CartContext.tsx";
-import { useLocation } from "react-router-dom";
-import type { Product } from "../data/products";
-import { demoProducts } from "../data/products";
+import {useCart} from "../context/CartContext.tsx";
+import {useLocation} from "react-router-dom";
+import type {Product} from "../types/product";
+import {fetchAllCategories, fetchProductsByCategory} from "../api/products";
 
 type HomeProps = {
   selectedCategory: Category;
@@ -13,9 +13,12 @@ type HomeProps = {
 };
 
 function Home({selectedCategory, searchQuery}: HomeProps) {
-  const {ids, has, toggle, showOnlyFavorites, setOnlyFavorites} = useFavorites();
-  const { add } = useCart();
+  const {has, toggle, showOnlyFavorites, setOnlyFavorites} = useFavorites();
+  const {add} = useCart();
   const location = useLocation();
+  const [items, setItems] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Sempre que estivermos na Home ("/"), garantir que o filtro de favoritos esteja desligado
   useEffect(() => {
@@ -24,10 +27,53 @@ function Home({selectedCategory, searchQuery}: HomeProps) {
     }
   }, [location.pathname, setOnlyFavorites]);
 
+  // Buscar da API conforme categoria / busca
+  useEffect(() => {
+    let cancelled = false;
+
+    // util local para embaralhar os produtos quando for "all"
+    function shuffle<T>(arr: T[]): T[] {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    async function run() {
+      setLoading(true);
+      setError(null);
+      try {
+        const q = searchQuery.trim() || undefined;
+        const data = selectedCategory === 'all'
+          ? await fetchAllCategories(q)
+          : await fetchProductsByCategory(selectedCategory, q);
+        // Filtra produtos sem imagem (não renderizar cards sem imagem)
+        const withImages = data.filter(p => !!p.image);
+        // Para a opção "All items", exibimos itens misturados (shuffle)
+        const finalList = selectedCategory === 'all' ? shuffle(withImages) : withImages;
+        if (!cancelled) setItems(finalList);
+      } catch (e: any) {
+        if (!cancelled) {
+          setError('Failed to load products from API.');
+          setItems([]);
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+
+    run();
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedCategory, searchQuery]);
+
   const byCategory = useMemo(() => {
-    if (selectedCategory === 'all') return demoProducts;
-    return demoProducts.filter(p => p.category === selectedCategory);
-  }, [selectedCategory]);
+    if (selectedCategory === 'all') return items;
+    return items.filter(p => p.category === selectedCategory);
+  }, [selectedCategory, items]);
 
   const bySearch = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
@@ -35,13 +81,10 @@ function Home({selectedCategory, searchQuery}: HomeProps) {
 
     // Mapeia palavras-chave de tipo para categorias
     const matchesCategory = (category: Product["category"], query: string) => {
-      if (["hair", "skin", "nails"].includes(query)) {
+      if (["eyes", "skin", "lips", "nails"].includes(query)) {
         return category === (query as Product["category"]);
       }
-      // palavras em PT que indicam as categorias
-      if (query === "cabelo") return category === "hair";
-      if (query === "pele") return category === "skin";
-      if (query === "unha" || query === "unhas") return category === "nails";
+      // English-only keywords (Portuguese aliases removed to keep the app fully in English)
       return false;
     };
 
@@ -55,7 +98,7 @@ function Home({selectedCategory, searchQuery}: HomeProps) {
   // Lista derivada só com os produtos favoritados
   const favoriteProducts = useMemo(
     () => bySearch.filter((p) => has(p.id)),
-    [bySearch, ids, has]
+    [bySearch, has]
   );
 
   const productsToRender = showOnlyFavorites ? favoriteProducts : bySearch;
@@ -64,6 +107,13 @@ function Home({selectedCategory, searchQuery}: HomeProps) {
     <div className="mx-auto max-w-7xl px-4 py-6">
       <h2 className="mb-4 text-lg font-semibold">{showOnlyFavorites ? "Favorites" : "Products"}</h2>
 
+      {loading && (
+        <div className="mb-4 text-sm text-gray-600">Loading products...</div>
+      )}
+      {error && (
+        <div className="mb-4 text-sm text-danger-600">{error}</div>
+      )}
+
       {/* Grade principal */}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
         {productsToRender.map((p) => (
@@ -71,11 +121,11 @@ function Home({selectedCategory, searchQuery}: HomeProps) {
             key={p.id}
             id={p.id}
             name={p.name}
-            priceEUR={p.priceEUR}
+            priceUSD={p.priceUSD}
             image={p.image}
             onToggleFavorite={() => toggle(p.id)}
             isFavorite={has(p.id)}
-            onAddToCart={() => add({ id: p.id, name: p.name, priceEUR: p.priceEUR, image: p.image }, 1)}
+            onAddToCart={() => add({id: p.id, name: p.name, priceUSD: p.priceUSD, image: p.image}, 1)}
           />
         ))}
       </div>

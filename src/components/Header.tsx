@@ -1,9 +1,10 @@
 import UserMenu from "./UserMenu.tsx";
-import {FavoriteToggleButton, useFavorites} from "./Favorite.tsx";
-import {Link, useNavigate} from "react-router-dom";
-import {useCart} from "./CartContext.tsx";
+import FavoriteToggleButton from "./FavoriteToggleButton.tsx";
+import { useFavorites } from "../context/FavoriteContext.tsx";
+import {Link, useMatch, useNavigate} from "react-router-dom";
+import {useCart} from "../context/CartContext.tsx";
 
-export type Category = 'all' | 'hair' | 'skin' | 'nails';
+export type Category = 'all' | 'eyes' | 'skin' | 'lips' | 'nails';
 
 type HeaderProps = {
   selectedCategory: Category;
@@ -33,6 +34,8 @@ export default function Header({selectedCategory, onCategoryChange, searchQuery,
   const {count} = useCart();
   const {setOnlyFavorites} = useFavorites();
   const navigate = useNavigate();
+  // Hide category filter bar on product details page
+  const isProductDetails = !!useMatch("/product/:id");
   return (
     <header className="border-b border-brand-100 bg-brand-50">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4">
@@ -46,7 +49,7 @@ export default function Header({selectedCategory, onCategoryChange, searchQuery,
               setOnlyFavorites(false);
             }}
             className="font-serif text-3xl font-bold tracking-tight"
-            aria-label="Ir para a página inicial e ver todos os itens"
+            aria-label="Go to home and see all items"
             title="Online Shop Kel"
           >
             Online Shop Kel
@@ -84,8 +87,8 @@ export default function Header({selectedCategory, onCategoryChange, searchQuery,
           <Link
             to="/cart"
             className="relative flex items-center justify-center rounded-full border border-brand-200 bg-white px-3 py-2 text-sm hover:bg-brand-50"
-            aria-label="Carrinho"
-            title="Carrinho"
+            aria-label="Cart"
+            title="Cart"
           >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                  className="h-5 w-5">
@@ -105,38 +108,44 @@ export default function Header({selectedCategory, onCategoryChange, searchQuery,
         </nav>
       </div>
 
-      {/* Category bar */}
-      <div className="mx-auto max-w-7xl px-4 pb-4">
-        <div className="flex flex-wrap items-center gap-2 text-sm text-gray-700">
-          <ul className="flex items-center gap-2">
-            <li>
-              <CategoryButton
-                label="All items"
-                value="all"
-                active={selectedCategory === 'all'}
-                onClick={() => {
-                  onCategoryChange('all');
-                  onSearchChange('');
-                  setOnlyFavorites(false);
-                  navigate('/');
-                }}
-              />
-            </li>
-            <li>
-              <CategoryButton label="Hair" value="hair" active={selectedCategory === 'hair'}
-                              onClick={onCategoryChange}/>
-            </li>
-            <li>
-              <CategoryButton label="Skin" value="skin" active={selectedCategory === 'skin'}
-                              onClick={onCategoryChange}/>
-            </li>
-            <li>
-              <CategoryButton label="Nails" value="nails" active={selectedCategory === 'nails'}
-                              onClick={onCategoryChange}/>
-            </li>
-          </ul>
+      {/* Category bar (hidden on product details) */}
+      {!isProductDetails && (
+        <div className="mx-auto max-w-7xl px-4 pb-4">
+          <div className="flex flex-wrap items-center gap-2 text-sm text-gray-700">
+            <ul className="flex items-center gap-2">
+              <li>
+                <CategoryButton
+                  label="All items"
+                  value="all"
+                  active={selectedCategory === 'all'}
+                  onClick={() => {
+                    onCategoryChange('all');
+                    onSearchChange('');
+                    setOnlyFavorites(false);
+                    navigate('/');
+                  }}
+                />
+              </li>
+              <li>
+                <CategoryButton label="Eyes" value="eyes" active={selectedCategory === 'eyes'}
+                                onClick={onCategoryChange}/>
+              </li>
+              <li>
+                <CategoryButton label="Skin" value="skin" active={selectedCategory === 'skin'}
+                                onClick={onCategoryChange}/>
+              </li>
+              <li>
+                <CategoryButton label="Lips" value="lips" active={selectedCategory === 'lips'}
+                                onClick={onCategoryChange}/>
+              </li>
+              <li>
+                <CategoryButton label="Nails" value="nails" active={selectedCategory === 'nails'}
+                                onClick={onCategoryChange}/>
+              </li>
+            </ul>
+          </div>
         </div>
-      </div>
+      )}
     </header>
   );
 }
