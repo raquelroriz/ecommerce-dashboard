@@ -1,9 +1,9 @@
 import {Link, useNavigate, useParams} from "react-router-dom";
-import {useMemo} from "react";
-import type {Product} from "../data/products";
-import {demoProducts} from "../data/products";
-import {useCart} from "../components/CartContext.tsx";
-import {useFavorites} from "../components/Favorite.tsx";
+import {useEffect, useState} from "react";
+import type {Product} from "../types/product";
+import {useCart} from "../context/CartContext.tsx";
+import {useFavorites} from "../context/FavoriteContext.tsx";
+import {fetchProductById} from "../api/products";
 
 export default function ProductDetails() {
   const {id} = useParams();
@@ -11,11 +11,48 @@ export default function ProductDetails() {
   const {add} = useCart();
   const {has, toggle} = useFavorites();
 
-  const product: Product | undefined = useMemo(() => {
-    const num = Number(id);
-    if (Number.isNaN(num)) return undefined;
-    return demoProducts.find((p) => p.id === num);
+  const [product, setProduct] = useState<Product | undefined>(undefined);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Load product from API only; no local fallback
+  useEffect(() => {
+    let cancelled = false;
+
+    async function run() {
+      const num = Number(id);
+      if (Number.isNaN(num)) {
+        setProduct(undefined);
+        return;
+      }
+      setLoading(true);
+      setError(null);
+      try {
+        const p = await fetchProductById(num);
+        if (!cancelled) setProduct(p);
+      } catch (e) {
+        if (!cancelled) {
+          setError('Failed to load product from API.');
+          setProduct(undefined);
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+
+    run();
+    return () => {
+      cancelled = true;
+    };
   }, [id]);
+
+  if (loading) {
+    return (
+      <div className="mx-auto max-w-3xl px-4 py-8">
+        <div className="rounded-md border border-brand-200 bg-white p-6 text-sm text-neutral-700">Loading…</div>
+      </div>
+    );
+  }
 
   if (!product) {
     return (
@@ -25,6 +62,7 @@ export default function ProductDetails() {
           <p className="mb-4 text-sm text-neutral-700">
             We couldn't find a product with id "{id}".
           </p>
+          {error && <div className="mb-4 text-sm text-danger-600">{error}</div>}
           <div className="flex gap-3">
             <button
               type="button"
@@ -46,16 +84,30 @@ export default function ProductDetails() {
   }
 
   const isFav = has(product.id);
+  const FALLBACK_IMG = "https://placehold.co/800x800?text=No+Image";
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8">
-      <div className="grid grid-cols-1 gap-6 items-start md:grid-cols-[240px,1fr]">
+      {/* Smaller image column on desktop */}
+      <div className="grid grid-cols-1 gap-6 items-start md:grid-cols-[180px,1fr]">
         {/* Image */}
-        <div className="overflow-hidden rounded-lg border bg-white w-56 sm:w-64 md:w-full mx-auto">
+        <div className="overflow-hidden rounded-lg border bg-white w-40 sm:w-48 md:w-[180px] mx-auto md:mx-0">
           <div className="aspect-square w-full bg-neutral-100">
             {product.image ? (
-              <img src={product.image} alt={product.name} className="h-full w-full object-cover"/>
-            ) : null}
+              <img
+                src={product.image}
+                alt={product.name}
+                loading="lazy"
+                referrerPolicy="no-referrer"
+                onError={(e) => {
+                  const t = e.currentTarget;
+                  if (t.src !== FALLBACK_IMG) t.src = FALLBACK_IMG;
+                }}
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center text-gray-400">No Image</div>
+            )}
           </div>
         </div>
 
@@ -64,7 +116,7 @@ export default function ProductDetails() {
           <div>
             <h1 className="text-2xl font-semibold">{product.name}</h1>
             <div className="mt-1 text-sm text-neutral-600 capitalize">Category: {product.category}</div>
-            <div className="mt-3 text-xl font-bold">€ {product.priceEUR.toFixed(2)}</div>
+            <div className="mt-3 text-xl font-bold">$ {product.priceUSD.toFixed(2)}</div>
           </div>
 
           {/* Actions (icon-only) */}
@@ -75,7 +127,7 @@ export default function ProductDetails() {
               onClick={() => add({
                 id: product.id,
                 name: product.name,
-                priceEUR: product.priceEUR,
+                priceUSD: product.priceUSD,
                 image: product.image
               }, 1)}
               className="inline-flex items-center gap-2 rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-200"
@@ -129,7 +181,7 @@ export default function ProductDetails() {
           <section className="rounded-md border border-brand-200 bg-white p-4">
             <h2 className="mb-2 text-base font-semibold">Shipping & Returns</h2>
             <p className="text-sm text-neutral-700">
-              Free shipping on orders over €50. Returns accepted within 30 days in original packaging.
+              Free shipping on orders over $50. Returns accepted within 30 days in original packaging.
             </p>
           </section>
         </div>
