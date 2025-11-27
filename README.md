@@ -7,7 +7,7 @@ only for now).
 
 ## Demo
 
-![Demonstração do Website](./assets/ShopKel.gif)
+![Demonstração do Website](./docs/shopkel.gif)
 
 ## Tech stack
 
