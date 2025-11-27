@@ -20,18 +20,18 @@ function Home({selectedCategory, searchQuery}: HomeProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Sempre que estivermos na Home ("/"), garantir que o filtro de favoritos esteja desligado
+  // Whenever you are on the Home page ("/"), make sure the favorites filter is turned off.
   useEffect(() => {
     if (location.pathname === "/") {
       setOnlyFavorites(false);
     }
   }, [location.pathname, setOnlyFavorites]);
 
-  // Buscar da API conforme categoria / busca
+  // Search from API by category / search
   useEffect(() => {
     let cancelled = false;
 
-    // util local para embaralhar os produtos quando for "all"
+    // place to shuffle the products when it's "all"
     function shuffle<T>(arr: T[]): T[] {
       const a = [...arr];
       for (let i = a.length - 1; i > 0; i--) {
@@ -49,7 +49,7 @@ function Home({selectedCategory, searchQuery}: HomeProps) {
         const data = selectedCategory === 'all'
           ? await fetchAllCategories(q)
           : await fetchProductsByCategory(selectedCategory, q);
-        // Filtra produtos sem imagem (não renderizar cards sem imagem)
+        // Filter out products without images (do not render cards without images)
         const withImages = data.filter(p => !!p.image);
         // Para a opção "All items", exibimos itens misturados (shuffle)
         const finalList = selectedCategory === 'all' ? shuffle(withImages) : withImages;
@@ -79,7 +79,7 @@ function Home({selectedCategory, searchQuery}: HomeProps) {
     const q = searchQuery.trim().toLowerCase();
     if (!q) return byCategory;
 
-    // Mapeia palavras-chave de tipo para categorias
+    // Maps keyword types to categories.
     const matchesCategory = (category: Product["category"], query: string) => {
       if (["eyes", "skin", "lips", "nails"].includes(query)) {
         return category === (query as Product["category"]);
@@ -95,7 +95,7 @@ function Home({selectedCategory, searchQuery}: HomeProps) {
     });
   }, [byCategory, searchQuery]);
 
-  // Lista derivada só com os produtos favoritados
+  // A list derived only from favorited products.
   const favoriteProducts = useMemo(
     () => bySearch.filter((p) => has(p.id)),
     [bySearch, has]
@@ -114,7 +114,7 @@ function Home({selectedCategory, searchQuery}: HomeProps) {
         <div className="mb-4 text-sm text-danger-600">{error}</div>
       )}
 
-      {/* Grade principal */}
+      {/* main grid, the card */}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
         {productsToRender.map((p) => (
           <Card

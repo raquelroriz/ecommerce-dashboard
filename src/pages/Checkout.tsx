@@ -67,7 +67,7 @@ export default function CheckoutPage() {
     }
     try {
       setPlacing(true);
-      // Simula processamento do pedido
+      // Simulates order processing.
       await new Promise((r) => setTimeout(r, 800));
       const orderId = Math.floor(100000 + Math.random() * 900000);
       clear();

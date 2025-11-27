@@ -10,8 +10,8 @@ export type CartItem = {
 
 type CartContextType = {
   items: CartItem[];
-  count: number;       // soma de quantidades
-  subtotal: number;    // soma preço * qty
+  count: number;       // sum quantity
+  subtotal: number;    // sum value + qty
   add: (item: Omit<CartItem, "qty">, qty?: number) => void;
   increment: (id: number, step?: number) => void;
   decrement: (id: number, step?: number) => void; // remove item quando chegar a 0
@@ -24,14 +24,14 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 const STORAGE_KEY = "cart-items";
 
 export function CartProvider({children}: { children: React.ReactNode }) {
-  // Normaliza itens vindos do localStorage (migração de priceEUR -> priceUSD, coerção de tipos, etc.)
+  // Normalizes items coming from localStorage (migration of EUR price to USD price, type coercion, etc.)
   function normalizeStoredItems(value: unknown): CartItem[] {
     if (!Array.isArray(value)) return [];
     const out: CartItem[] = [];
     for (const anyItem of value) {
       const id = Number((anyItem as any)?.id);
       const name = String((anyItem as any)?.name ?? "").trim();
-      // Suporta legado: priceEUR ou priceUSD ausente
+      // Legacy support: missing EUR or USD price.
       const legacyPriceEUR = (anyItem as any)?.priceEUR;
       const priceCandidate = (anyItem as any)?.priceUSD ?? legacyPriceEUR ?? 0;
       const priceUSD = Number.parseFloat(priceCandidate) || 0;
@@ -80,7 +80,7 @@ export function CartProvider({children}: { children: React.ReactNode }) {
 
   const decrement = (id: number, step = 1) => {
     setItems(prev => {
-       // remove quando chegar a 0
+      // remove when it reaches 0
       return prev.map(p => p.id === id ? {...p, qty: p.qty - step} : p)
         .filter(p => p.qty > 0);
     });

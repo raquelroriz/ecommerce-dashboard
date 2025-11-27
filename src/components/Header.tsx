@@ -1,6 +1,6 @@
 import UserMenu from "./UserMenu.tsx";
 import FavoriteToggleButton from "./FavoriteToggleButton.tsx";
-import { useFavorites } from "../context/FavoriteContext.tsx";
+import {useFavorites} from "../context/FavoriteContext.tsx";
 import {Link, useMatch, useNavigate} from "react-router-dom";
 import {useCart} from "../context/CartContext.tsx";
 
@@ -38,9 +38,10 @@ export default function Header({selectedCategory, onCategoryChange, searchQuery,
   const isProductDetails = !!useMatch("/product/:id");
   return (
     <header className="border-b border-brand-100 bg-brand-50">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4">
+      <div
+        className="mx-auto flex max-w-7xl flex-wrap items-start justify-between gap-3 px-4 py-4 md:flex-nowrap md:items-center md:gap-4">
         {/* Store name */}
-        <div className="flex items-center gap-2">
+        <div className="order-1 flex items-center gap-2 shrink-0">
           <Link
             to="/"
             onClick={() => {
@@ -56,8 +57,8 @@ export default function Header({selectedCategory, onCategoryChange, searchQuery,
           </Link>
         </div>
 
-        {/* Search */}
-        <div className="flex-1 max-w-xl">
+        {/* Search products*/}
+        <div className="order-3 w-full md:order-2 md:flex-1 md:max-w-xl">
           <label htmlFor="search" className="sr-only">Search</label>
           <div className="relative">
             <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-gray-400">
@@ -80,7 +81,7 @@ export default function Header({selectedCategory, onCategoryChange, searchQuery,
         </div>
 
         {/* Actions (favorites, cart, login) */}
-        <nav className="flex items-center gap-4">
+        <nav className="order-2 flex items-center gap-2 sm:gap-3 md:order-3 shrink-0">
           <FavoriteToggleButton/>
 
           {/* Cart icon with badge and link */}
@@ -103,16 +104,16 @@ export default function Header({selectedCategory, onCategoryChange, searchQuery,
             )}
           </Link>
 
-          {/* User menu (login / new account) */}
           <UserMenu/>
         </nav>
       </div>
 
-      {/* Category bar (hidden on product details) */}
+      {/* Category bar, hidden on product details */}
       {!isProductDetails && (
         <div className="mx-auto max-w-7xl px-4 pb-4">
-          <div className="flex flex-wrap items-center gap-2 text-sm text-gray-700">
-            <ul className="flex items-center gap-2">
+          {/* Horizontal scroll on small screens for category pills */}
+          <div className="overflow-x-auto [-webkit-overflow-scrolling:touch]">
+            <ul className="inline-flex min-w-max items-center gap-2 text-sm text-gray-700">
               <li>
                 <CategoryButton
                   label="All items"

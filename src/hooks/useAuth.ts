@@ -1,29 +1,22 @@
-// Hooks auxiliares para autenticação
-// Mantém compatibilidade: exporta o hook original do contexto
+// Auxiliary hooks for authentication
 export {useAuth} from "../context/AuthContext";
 
 import {useMemo} from "react";
 import {type AuthUser, useAuth} from "../context/AuthContext";
 
-/**
- * Retorna apenas o usuário autenticado (ou null).
- */
+// Returns only the authenticated user (or null).
 export function useAuthUser(): AuthUser | null {
   const {user} = useAuth();
   return user;
 }
 
-/**
- * Retorna somente o booleano de autenticação.
- */
+// Returns only the authentication boolean.
 export function useIsAuthenticated(): boolean {
   const {isAuthenticated} = useAuth();
   return isAuthenticated;
 }
 
-/**
- * Retorna apenas as ações do auth: login, register e logout.
- */
+// It only returns the auth actions: login, register, and logout.
 export function useAuthActions() {
   const {login, register, logout} = useAuth();
   return useMemo(() => ({login, register, logout}), [login, register, logout]);
