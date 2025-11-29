@@ -25,7 +25,7 @@ function Card({id, name, priceUSD, image, onMoreDetails, onToggleFavorite, isFav
   if (hidden) return null;
 
   return (
-    <article className="overflow-hidden rounded-lg border bg-white shadow-sm">
+    <article className="flex h-full flex-col overflow-hidden rounded-lg border bg-white shadow-sm">
       {/* Card */}
       <div className="aspect-square w-full bg-neutral-100" aria-hidden>
 
@@ -50,7 +50,7 @@ function Card({id, name, priceUSD, image, onMoreDetails, onToggleFavorite, isFav
       </div>
 
       {/* More details and add to cart buttons */}
-      <div className="mt-3 flex w-full flex-wrap items-center gap-2 px-3 pb-3">
+      <div className="mt-auto flex w-full flex-wrap items-center gap-2 px-3 pb-3">
         <button
           className="w-full sm:w-auto rounded-full bg-brand-600 text-white px-3 py-2 text-sm hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-200"
           onClick={goToDetails}
@@ -70,7 +70,7 @@ function Card({id, name, priceUSD, image, onMoreDetails, onToggleFavorite, isFav
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                className="h-5 w-5">
             <path
-              d="M2.25 3a.75.75 0 0 0 0 1.5h1.386l.955 9.549A2.25 2.25 0 0 0 6.83 16.125h8.79a2.25 2.25 0  0 0 2.238-2.076l.66-7.425A.75.75 0  0 0 17.775 6H5.99l-.13-1.3A1.5 1.5 0  0 0 4.636 3H2.25Zm5.25 18a1.5 1.5 0  1 0 0-3 1.5 1.5 0  0 0 0 3Zm9-1.5a1.5 1.5 0  1 1-3 0 1.5 1.5 0  0 1 3 0Z"/>
+              d="M2.25 3a.75.75 0 0 0 0 1.5h1.386l.955 9.549A2.25 2.25 0 0 0 6.83 16.125h8.79a2.25 2.25 0  0 0 2.238-2.076l.66-7.425A.75.75 0  0 0 17.775 6H5.99l-.13-1.3A1.5 1.5 0  0  0 4.636 3H2.25Zm5.25 18a1.5 1.5 0  1 0 0-3 1.5 1.5 0  0 0 0 3Zm9-1.5a1.5 1.5 0  1 1-3 0 1.5 1.5 0  0  1 3 0Z"/>
           </svg>
         </button>
 
@@ -88,7 +88,7 @@ function Card({id, name, priceUSD, image, onMoreDetails, onToggleFavorite, isFav
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                className={`h-5 w-5 ${isFavorite ? "text-rose-600" : "text-rose-500"}`}>
             <path
-              d="M11.645 20.91l-.007-.003-.022-.012a21.86 21.86 0  0 1-1.162-.682 25.18 25.18 0  0 1-4.063-3.02C3.454 14.584 1.5 12.272 1.5 9.75A5.25 5.25 0  0 1 6.75 4.5a5.22 5.22 0  0 1 3.75 1.59A5.22 5.22 0  0 1 14.25 4.5 5.25 5.25 0  0 1 19.5 9.75c0 2.523-1.955 4.834-4.891 7.444a25.18 25.18 0  0 1-4.063 3.02 21.86 21.86 0  0 1-1.162.682l-.022.012-.007.003-.003.002a.75.75 0  0 1-.682 0l-.003-.002Z"/>
+              d="M11.645 20.91l-.007-.003-.022-.012a21.86 21.86 0  0 1-1.162-.682 25.18 25.18 0  0 1-4.063 3.02C3.454 14.584 1.5 12.272 1.5 9.75A5.25 5.25 0  0 1 6.75 4.5a5.22 5.22 0  0 1 3.75 1.59A5.22 5.22 0  0 1 14.25 4.5 5.25 5.25 0  0 1 19.5 9.75c0 2.523-1.955 4.834-4.891 7.444a25.18 25.18 0  0 1-4.063 3.02 21.86 21.86 0  0  1-1.162.682l-.022.012-.007.003-.003.002a.75.75 0  0 1-.682 0l-.003-.002Z"/>
           </svg>
         </button>
       </div>

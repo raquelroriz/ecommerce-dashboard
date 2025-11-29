@@ -2,7 +2,8 @@ import {useState} from "react";
 import {Route, Routes} from "react-router-dom";
 
 import Footer from "./components/Footer";
-import Header, {type Category} from "./components/Header";
+import Header from "./components/Header";
+import type {Category} from "./types/category";
 
 import Home from "./pages/Home";
 import ShoppingCart from "./pages/ShoppingCart";

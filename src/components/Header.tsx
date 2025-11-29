@@ -3,8 +3,8 @@ import FavoriteToggleButton from "./FavoriteToggleButton.tsx";
 import {useFavorites} from "../context/FavoriteContext.tsx";
 import {Link, useMatch, useNavigate} from "react-router-dom";
 import {useCart} from "../context/CartContext.tsx";
-
-export type Category = 'all' | 'eyes' | 'skin' | 'lips' | 'nails';
+import CategoryButton from "./CategoryButton.tsx";
+import type {Category} from "../types/category.ts";
 
 type HeaderProps = {
   selectedCategory: Category;
@@ -12,23 +12,6 @@ type HeaderProps = {
   searchQuery: string;
   onSearchChange: (q: string) => void;
 };
-
-function CategoryButton({label, value, active, onClick}: {
-  label: string;
-  value: Category;
-  active: boolean;
-  onClick: (c: Category) => void
-}) {
-  return (
-    <button
-      className={`rounded-full px-3 py-1 ${active ? 'bg-brand-600 text-white hover:bg-brand-600' : 'bg-white border border-brand-200 hover:bg-brand-50'}`}
-      aria-pressed={active}
-      onClick={() => onClick(value)}
-    >
-      {label}
-    </button>
-  );
-}
 
 export default function Header({selectedCategory, onCategoryChange, searchQuery, onSearchChange}: HeaderProps) {
   const {count} = useCart();

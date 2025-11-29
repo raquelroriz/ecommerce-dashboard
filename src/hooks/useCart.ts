@@ -1,4 +1,4 @@
-// Hooks auxiliares para o carrinho
+// Auxiliary hooks for the stroller
 import {useMemo} from "react";
 import type {CartItem} from "../context/CartContext";
 import {useCart as useCartBase} from "../context/CartContext";

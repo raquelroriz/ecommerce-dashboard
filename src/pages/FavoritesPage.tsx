@@ -1,7 +1,7 @@
 import {useEffect} from "react";
 import {useFavorites} from "../context/FavoriteContext";
 import Home from "./Home";
-import {type Category} from "../components/Header";
+import {type Category} from "../types/category";
 
 interface FavoritesPageProps {
   selectedCategory: Category;

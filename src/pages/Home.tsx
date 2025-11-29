@@ -1,7 +1,7 @@
 import {useEffect, useMemo, useState} from "react";
 import Card from "../components/Card.tsx";
 import {useFavorites} from "../context/FavoriteContext.tsx";
-import type {Category} from "../components/Header.tsx";
+import type {Category} from "../types/category";
 import {useCart} from "../context/CartContext.tsx";
 import {useLocation} from "react-router-dom";
 import type {Product} from "../types/product";
